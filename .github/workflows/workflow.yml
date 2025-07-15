@@ -1,0 +1,13 @@
+name: Deploy-to-AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  upload-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install AWS CLI
+        run: |
