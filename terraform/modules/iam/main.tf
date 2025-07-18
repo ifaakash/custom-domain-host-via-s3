@@ -36,7 +36,7 @@ resource "aws_iam_policy" "allow_s3" {
       {
         Sid      = "AllowGetObject"
         Effect   = "Allow"
-        Action   = ["s3:GetObject", "s3:PutObject"]
+        Action   = ["s3:GetObject", "s3:PutObject", "s3:ListObject"]
         Resource = "arn:aws:s3:::${var.bucket_name}/*"
       }
     ]

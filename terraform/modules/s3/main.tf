@@ -8,27 +8,42 @@ resource "aws_s3_bucket" "s3" {
   }
 }
 
-# resource "aws_s3_bucket_policy" "public_read" {
-#   bucket = aws_s3_bucket.s3.id
+resource "aws_s3_object" "landing_page" {
+  bucket       = aws_s3_bucket.s3.id
+  key          = "index.html"
+  source       = "index.html"
+  content_type = var.content_type
+}
 
-#   policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [
-#       {
-#         Effect    = "Allow",
-#         Principal = "*",
-#         Action    = "s3:GetObject",
-#         Resource  = "${aws_s3_bucket.s3.arn}/*"
-#       }
-#     ]
-#   })
-# }
+resource "aws_s3_object" "error_page" {
+  bucket       = aws_s3_bucket.s3.id
+  key          = "error.html"
+  source       = "error.html"
+  content_type = var.content_type
+}
+
+
+resource "aws_s3_bucket_policy" "public_read" {
+  bucket = aws_s3_bucket.s3.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = ["s3:*"],
+        Resource  = "${aws_s3_bucket.s3.arn}/*"
+      }
+    ]
+  })
+}
 
 
 resource "aws_s3_bucket_website_configuration" "s3_hosting" {
   bucket = aws_s3_bucket.s3.id
   index_document {
-    suffix = "landing.html"
+    suffix = "index.html"
   }
   error_document {
     key = "error.html"
@@ -52,4 +67,10 @@ resource "aws_s3_bucket_public_access_block" "s3_public_access" {
 output "bucket-name" {
   description = "Name of the S3 bucket created"
   value       = aws_s3_bucket.s3.id
+}
+
+
+variable "content_type" {
+  type    = string
+  default = "text/html"
 }
