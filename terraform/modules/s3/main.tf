@@ -8,7 +8,24 @@ resource "aws_s3_bucket" "s3" {
   }
 }
 
-resource "aws_s3_bucket_website_configuration" "hosting" {
+# resource "aws_s3_bucket_policy" "public_read" {
+#   bucket = aws_s3_bucket.s3.id
+
+#   policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [
+#       {
+#         Effect    = "Allow",
+#         Principal = "*",
+#         Action    = "s3:GetObject",
+#         Resource  = "${aws_s3_bucket.s3.arn}/*"
+#       }
+#     ]
+#   })
+# }
+
+
+resource "aws_s3_bucket_website_configuration" "s3_hosting" {
   bucket = aws_s3_bucket.s3.id
   index_document {
     suffix = "landing.html"
@@ -16,6 +33,19 @@ resource "aws_s3_bucket_website_configuration" "hosting" {
   error_document {
     key = "error.html"
   }
+}
+output "hosting_url" {
+  value = aws_s3_bucket_website_configuration.s3_hosting.website_endpoint
+}
+
+
+
+resource "aws_s3_bucket_public_access_block" "s3_public_access" {
+  bucket                  = aws_s3_bucket.s3.id
+  block_public_policy     = false
+  block_public_acls       = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 

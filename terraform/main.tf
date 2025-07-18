@@ -28,3 +28,7 @@ output "bucket-name" {
   description = "Name of the S3 bucket created"
   value       = module.s3.bucket-name
 }
+
+output "hosting_url" {
+  value = module.s3.hosting_url
+}
